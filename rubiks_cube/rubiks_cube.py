@@ -84,14 +84,14 @@ class RubiksCube:
         }
 
     @staticmethod
+    def _get_face(i, n):
+        return np.array([[i for _ in range(n)] for _ in range(n)], np.int32)
+
+    @staticmethod
     def __get_face_slice(rotation, layer_index):
         face_slice = [slice(None)] * len(rotation.face.shape)
         face_slice[rotation.axis] = layer_index
         return tuple(face_slice)
-
-    @staticmethod
-    def _get_face(i, n):
-        return np.array([[i for _ in range(n)] for _ in range(n)], np.int32)
 
     def __get_face_by_layer(self, axis, layer_index):
         if layer_index in (0, -self.n):
@@ -130,9 +130,14 @@ class RubiksCube:
             face_slice = self.__get_face_slice(rotation, layer_index)
             rotation.face[face_slice] = new_layer_slice
 
+    def rotate_ud(self, layer_index=0, rotate_by=1):
+        self._rotate_layer(UD_AXIS, layer_index, rotate_by)
 
-    def u(self, layer_index=0):
-        self._rotate_layer(UD_AXIS, layer_index, 1)
+    def rotate_fb(self, layer_index=0, rotate_by=1):
+        self._rotate_layer(FB_AXIS, layer_index, rotate_by)
+
+    def rotate_lr(self, layer_index=0, rotate_by=1):
+        self._rotate_layer(LR_AXIS, layer_index, rotate_by)
 
     def __str__(self):
         return "\n".join(
@@ -141,7 +146,7 @@ class RubiksCube:
 
 if __name__ == '__main__':
     cube = RubiksCube(3)
-    cube.top[0,0] = 10
-    cube.top[2,2] = 11
-    cube.u()
+    cube.left[0,0] = 10
+    cube.left[2,2] = 11
+    cube.rotate_lr()
     print(cube)
