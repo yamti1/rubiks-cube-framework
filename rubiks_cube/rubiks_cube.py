@@ -53,10 +53,10 @@ class RubiksCube:
 
         self.rotations = {
             UD_AXIS: [
-                self.Rotation(self.right, self.MAJOR_AXIS),
-                self.Rotation(self.back, self.MAJOR_AXIS),
-                self.Rotation(self.left, self.MAJOR_AXIS),
                 self.Rotation(self.front, self.MAJOR_AXIS),
+                self.Rotation(self.left, self.MAJOR_AXIS),
+                self.Rotation(self.back, self.MAJOR_AXIS),
+                self.Rotation(self.right, self.MAJOR_AXIS),
             ],
             FB_AXIS: [
                 self.Rotation(self.top, self.MAJOR_AXIS),
@@ -106,9 +106,13 @@ class RubiksCube:
         try:
             face_name = self.__get_face_by_layer(rotation_axis, layer_index)
         except ValueError:
-            pass
+            return
         face = self.faces[face_name]
-        setattr(self, face_name, np.rot90(face, rotate_by))
+
+        # Numpy rotates counter-clockwise by default,
+        # while the Rubik's Cube standard is clockwise.
+        # That's why `rotate_by` is negated.
+        setattr(self, face_name, np.rot90(face, -rotate_by))
 
     def _rotate_layer(self, rotation_axis, layer_index, rotate_by):
         self.__rotate_face(rotation_axis, layer_index, rotate_by)
@@ -120,7 +124,7 @@ class RubiksCube:
             face_slice = self.__get_face_slice(rotation, layer_index)
             layer.append(rotation.face[face_slice].copy())
 
-        rotated_layer = np.roll(layer, rotate_by)
+        rotated_layer = np.roll(layer, rotate_by, axis=0)
 
         for rotation, new_layer_slice in zip(rotations, rotated_layer):
             face_slice = self.__get_face_slice(rotation, layer_index)
