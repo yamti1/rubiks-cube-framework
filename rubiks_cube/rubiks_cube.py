@@ -141,7 +141,7 @@ class RubiksCube:
 
     def __str__(self):
         return "\n".join(
-            ["{}:\n{}".format(name, face) for name, face in self.faces.items()]
+            [f"{name}:\n{face}" for name, face in self.faces.items()]
         )
 
 if __name__ == '__main__':
